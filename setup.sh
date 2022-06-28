@@ -1,5 +1,7 @@
 #!/bin/bash -eu
 
+do_install() {
+
 [ $(id -u) -ne 0 ] && echo >&2 "FATAL: use sudo to run the script"
 [ ! "$(cat /etc/os-release | awk -F '=' '/^ID_LIKE=/{print $2}')" = "debian" ] && echo >&2 "FATAL: script tested on debian family distros. Read the script to understand how it works"
 
@@ -116,4 +118,8 @@ source ~/.bashrc
 
 gopass clone git@github.com:baas-smartcredit/password-store.git
 
+}
 
+# wrapped up in a function so that we have some protection against only getting
+# half the file during "curl | sh"
+do_install
