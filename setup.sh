@@ -1,18 +1,26 @@
 #!/bin/bash -eu
 
-do_install() {
-
-[ $(id -u) -ne 0 ] && echo >&2 "FATAL: use sudo to run the script"
-[ ! "$(cat /etc/os-release | awk -F '=' '/^ID_LIKE=/{print $2}')" = "debian" ] && echo >&2 "FATAL: script tested on debian family distros. Read the script to understand how it works"
+[ $(id -u) -ne 0 ] && echo >&2 "FATAL: use sudo to run the script" && exit 255
+[ ! "$(cat /etc/os-release | awk -F '=' '/^ID_LIKE=/{print $2}')" = "debian" ] && echo >&2 "FATAL: script tested on debian family distros. Read the script to understand how it works" && exit 255
 
 : ${FULLNAME:?'FATAL: missing FULLNAME variable'}
 : ${EMAIL:?'FATAL: missing EMAIL variable'}
 
-
-export DEBIAN_FRONTEND=noninteractive
+#export DEBIAN_FRONTEND=noninteractive
 
 apt-get update  -qq
-apt-get install -qq -y curl git gnupg rng-tools
+apt-get install -qq -y curl vim git gnupg rng-tools
+
+
+# ========================================================= DOCKER
+
+curl https://get.docker.com | bash
+service docker start
+usermod -aG docker $SUDO_USER
+
+# ========================================================= (switch back to normal user)
+
+exec su -l $SUDO_USER
 
 # ========================================================= SSH
 
@@ -33,10 +41,11 @@ Now do the following before continuing :
     $(cat ~/.ssh/id_ed25519.pub)
 
 "
+read
 
-while [ $(ssh -o LogLevel=ERROR -o StrictHostKeyChecking=accept-new -o RequestTTY=no git@github.com) -eq 255 ]; do
-    echo "Nope. Retry please."
-    read
+while ! ssh -o LogLevel=ERROR -o StrictHostKeyChecking=accept-new -o RequestTTY=no git@github.com
+do
+    read -p "Nope. Retry then press a key."
 done
 
 # ========================================================= GPG
@@ -72,15 +81,6 @@ shred -fuz ~/gpg.conf
 
 git config --global user.name  "$FULLNAME"
 git config --global user.email "$EMAIL"
-
-# ========================================================= DOCKER
-
-curl https://get.docker.com | bash
-service docker start
-usermod -aG docker $SUDO_USER
-
-# (switch back to normal user)
-exec su -l $SUDO_USER
 
 # ========================================================= ASDF
 
@@ -118,8 +118,3 @@ source ~/.bashrc
 
 gopass clone git@github.com:baas-smartcredit/password-store.git
 
-}
-
-# wrapped up in a function so that we have some protection against only getting
-# half the file during "curl | sh"
-do_install
