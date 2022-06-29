@@ -19,6 +19,9 @@ then
   sudo usermod -aG docker $USER
 fi
 
+sleep 1
+docker pull postman/newman:alpine
+
 # ========================================================= SSH
 
 # https://www.ssi.gouv.fr/guide/recommandations-pour-un-usage-securise-dopenssh/
@@ -48,6 +51,9 @@ do
     echo
     sleep 30
 done
+
+mkdir -p /home/$USER/lab/github.com/baas-smartcredit/
+git clone git@github.com:baas-smartcredit/epos.git /home/$USER/lab/github.com/baas-smartcredit/epos
 
 # ========================================================= GPG
 
@@ -82,6 +88,7 @@ shred -fuz ~/gpg.conf
 
 git config --global user.name  "$FULLNAME"
 git config --global user.email "$EMAIL"
+git config --global advice.detachedHead "false"
 
 # ========================================================= ASDF
 sleep 1
@@ -96,9 +103,10 @@ source \$HOME/.asdf/completions/asdf.bash
 EOF
 fi
 
-echo "Wait 10s before reloading .bashrc and installing golang"
-sleep 10
-. ~/.bashrc
+echo "Wait 5s before reloading .bashrc and installing golang"
+sleep 5
+source $HOME/.asdf/asdf.sh
+source $HOME/.asdf/completions/asdf.bash
 
 # ========================================================= GOLANG
 
@@ -116,11 +124,45 @@ gopass version
 
 cat >> ~/.bashrc <<EOF
 
+export EDITOR=nano
 source <(gopass completion bash)
-export EDITOR=vim
 au BufNewFile,BufRead /dev/shm/gopass.* setlocal noswapfile nobackup noundofile
 EOF
 
-source ~/.bashrc
-
 gopass clone git@github.com:baas-smartcredit/password-store.git
+
+gopass ls
+
+# ========================================================= FINISH
+
+echo "
+Congrats
+
+[1/4]
+
+A little recap what the script have just done :
+- Create SSH keys (and import it to your github account)
+- Create GPG keys (and install gnupg dependency)
+- Configure git username and email (and install git dependency)
+- Install and setup gopass (and install asdf+golang dependencies)
+- Install and setup docker
+
+[2/4]
+
+Also the following git repositories have been cloned :
+- Testing automation : /home/$USER/lab/github.com/baas-smartcredit/epos
+
+You're all almost done...
+
+[3/4]
+
+Now ask the Tech Lead to import your GPG public keys to the shared encrypted password repository :
+
+$(gpg --export --armor $EMAIL)
+
+[4/4]
+
+Finally, confirm you're key has successfully been imported with the following command :
+
+gopass sync && gopass success
+"
