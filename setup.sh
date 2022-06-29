@@ -24,7 +24,11 @@ then
 fi
 
 sleep 1
+exec sudo su -l $USER
+docker ps
+
 docker pull postman/newman:alpine
+docker images
 
 # ========================================================= SSH
 
