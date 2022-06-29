@@ -23,12 +23,9 @@ then
   sudo usermod -aG docker $USER
 fi
 
-sleep 1
-exec sudo su -l $USER
-docker ps
-
-docker pull postman/newman:alpine
-docker images
+sudo docker ps
+sudo docker pull postman/newman:alpine
+sudo docker images
 
 # ========================================================= SSH
 
@@ -146,8 +143,6 @@ gopass ls
 echo "
 Congrats
 
-[1/4]
-
 A little recap what the script have just done :
 - Create SSH keys (and import it to your github account)
 - Create GPG keys (and install gnupg dependency)
@@ -155,22 +150,27 @@ A little recap what the script have just done :
 - Install and setup gopass (and install asdf+golang dependencies)
 - Install and setup docker
 
-[2/4]
-
 Also the following git repositories have been cloned :
 - Testing automation : /home/$USER/lab/github.com/baas-smartcredit/epos
 
 You're all almost done...
 
-[3/4]
+[1/2]
 
 Now ask the Tech Lead to import your GPG public keys to the shared encrypted password repository :
 
 $(gpg --export --armor $EMAIL)
 
-[4/4]
+[2/2]
 
-Finally, confirm you're key has successfully been imported with the following command :
+Confirm you're key has successfully been imported with the following command :
 
 gopass sync && gopass success
+
+[3/3]
+
+Finally reload your current shell session so you can use docker :
+
+exec sudo su -l $USER
 "
+
