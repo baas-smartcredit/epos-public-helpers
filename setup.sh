@@ -14,6 +14,10 @@ sudo apt-get install -y curl vim git gnupg rng-tools
 
 if ! command -v "docker" > /dev/null 2>&1
 then
+  
+  sudo update-alternatives --set iptables  /usr/sbin/iptables-legacy
+  sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+
   curl https://get.docker.com | sudo bash
   sudo service docker start
   sudo usermod -aG docker $USER
