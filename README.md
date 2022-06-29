@@ -56,7 +56,7 @@ wsl -d wsl-ubuntu
 Finally you are now back in Ubuntu, exec the following command to 
 
 ```bash
-export FULLNAME="Matthieu FRONTON" && export EMAIL="matthieu.fronton@capgemini.com" && wget https://raw.githubusercontent.com/baas-smartcredit/epos-public-helpers/main/setup.sh && chmod +x setup.sh && ./setup.sh
+export FULLNAME="Matthieu FRONTON" && export EMAIL="matthieu.fronton@capgemini.com" && cd && wget https://raw.githubusercontent.com/baas-smartcredit/epos-public-helpers/main/setup.sh && chmod +x setup.sh && ./setup.sh
 ```
 
 ## Extras
