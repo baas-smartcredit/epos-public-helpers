@@ -59,7 +59,7 @@ cat > ~/gpg.conf <<EOF
 Key-Type: RSA
 Subkey-Type: RSA
 Name-Real: ${FULLNAME}
-Name-Comment: ${FULLNAME}'s key
+Name-Comment: gopass key
 Name-Email: ${EMAIL}
 Expire-Date: 0
 Passphrase: ${GPG_PASSPHRASE}
@@ -96,11 +96,13 @@ source \$HOME/.asdf/completions/asdf.bash
 EOF
 fi
 
-sleep 1
-source ~/.bashrc
+echo "Wait 10s before reloading .bashrc and installing golang"
+sleep 10
+. ~/.bashrc
 
 # ========================================================= GOLANG
 
+sleep 1
 asdf plugin add golang
 asdf install golang latest
 asdf global golang latest
@@ -115,7 +117,7 @@ gopass version
 cat >> ~/.bashrc <<EOF
 
 source <(gopass completion bash)
-export EDITOR=vi
+export EDITOR=vim
 au BufNewFile,BufRead /dev/shm/gopass.* setlocal noswapfile nobackup noundofile
 EOF
 
