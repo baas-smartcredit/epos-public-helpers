@@ -12,11 +12,11 @@ sudo apt-get install -y curl vim git gnupg rng-tools
 
 # ========================================================= DOCKER
 
-if ! command -v "$@" > /dev/null 2>&1
+if ! command -v "docker" > /dev/null 2>&1
 then
   curl https://get.docker.com | sudo bash
-  service docker start
-  usermod -aG docker $USER
+  sudo service docker start
+  sudo usermod -aG docker $USER
 fi
 
 # ========================================================= SSH
@@ -84,7 +84,7 @@ git config --global user.name  "$FULLNAME"
 git config --global user.email "$EMAIL"
 
 # ========================================================= ASDF
-
+sleep 1
 if [ ! -d ~/.asdf ]
 then
     git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
@@ -96,6 +96,7 @@ source \$HOME/.asdf/completions/asdf.bash
 EOF
 fi
 
+sleep 1
 source ~/.bashrc
 
 # ========================================================= GOLANG
@@ -121,4 +122,3 @@ EOF
 source ~/.bashrc
 
 gopass clone git@github.com:baas-smartcredit/password-store.git
-
