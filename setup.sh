@@ -89,6 +89,9 @@ gpg --batch --gen-key ~/gpg.conf
 
 shred -fuz ~/gpg.conf
 
+# fix decription errors "gpg: public key decryption failed: Permission denied"
+echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+
 # ========================================================= GIT
 
 git config --global user.name  "$FULLNAME"
