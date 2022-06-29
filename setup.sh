@@ -10,6 +10,8 @@ export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update
 sudo apt-get install -y curl vim git gnupg rng-tools
 
+echo 'source ~/.bashrc' >> ~/.bash_login
+
 # ========================================================= DOCKER
 
 if ! command -v "docker" > /dev/null 2>&1
@@ -134,14 +136,21 @@ cat >> ~/.bashrc <<EOF
 
 export EDITOR=nano
 source <(gopass completion bash)
+EOF
+
+cat >> ~/.vimrc <<EOF
+
+set background=dark
+set tabstop=4
+set expandtab
+set hls
+
 au BufNewFile,BufRead /dev/shm/gopass.* setlocal noswapfile nobackup noundofile
 EOF
 
 gopass clone git@github.com:baas-smartcredit/password-store.git
 
 gopass ls
-
-gpg --decrypt --pinentry-mode=loopback ~/.local/share/gopass/stores/root/success.gpg
 
 # ========================================================= FINISH
 
