@@ -81,9 +81,9 @@ umask 022
 
 echo "
 Before continuing, here is your GPG passphrase: $GPG_PASSPHRASE
-(It won't be displayed again)
+It won't be displayed again
 "
-read
+read -p "[Press any key to continue]"
 
 gpg --batch --gen-key ~/gpg.conf
 
@@ -137,6 +137,8 @@ EOF
 gopass clone git@github.com:baas-smartcredit/password-store.git
 
 gopass ls
+
+gpg --decrypt --pinentry-mode=loopback ~/.local/share/gopass/stores/root/success.gpg
 
 # ========================================================= FINISH
 

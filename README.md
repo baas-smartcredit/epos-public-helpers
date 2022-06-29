@@ -43,7 +43,7 @@ wsl -d wsl-ubuntu
 You are now in Ubuntu, exec this command to setup the bare minimal about yourself
 
 ```bash
-USERNAME=mfronton && apt autoremove -y -qq && apt update -qq && apt upgrade -y -qq && apt install -y -qq sudo && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/$USERNAME && useradd $USERNAME -s /bin/bash -d /home/$USERNAME && mkdir -p /home/$USERNAME && chown $USERNAME:$USERNAME /home/$USERNAME && echo -e "[user]\ndefault=$USERNAME" | tee /etc/wsl.conf && exit
+export USERNAME=mfronton && apt autoremove -y -qq && apt update -qq && apt upgrade -y -qq && apt install -y -qq sudo && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/$USERNAME && useradd $USERNAME -s /bin/bash -d /home/$USERNAME && mkdir -p /home/$USERNAME && chown $USERNAME:$USERNAME /home/$USERNAME && echo -e "[user]\ndefault=$USERNAME" | tee /etc/wsl.conf && exit
 ```
 
 You are now back in PowerShell, exec the following command to restart the VM
@@ -56,7 +56,7 @@ wsl -d wsl-ubuntu
 Finally you are now back in Ubuntu, exec the following command to 
 
 ```bash
-FULLNAME="Matthieu FRONTON" && EMAIL="matthieu.fronton@capgemini.com" && wget https://raw.githubusercontent.com/baas-smartcredit/epos-public-helpers/main/setup.sh && chmod +x setup.sh && ./setup.sh
+export FULLNAME="Matthieu FRONTON" && export EMAIL="matthieu.fronton@capgemini.com" && wget https://raw.githubusercontent.com/baas-smartcredit/epos-public-helpers/main/setup.sh && chmod +x setup.sh && ./setup.sh
 ```
 
 ## Extras
