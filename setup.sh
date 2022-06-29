@@ -8,7 +8,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 sudo apt-get update
-sudo apt-get install -y curl vim git gnupg rng-tools
+sudo apt-get install -y curl make vim git gnupg rng-tools
 
 echo 'source ~/.bashrc' >> ~/.bash_login
 
