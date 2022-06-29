@@ -1,31 +1,28 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
-[ $(id -u) -ne 0 ] && echo >&2 "FATAL: use sudo to run the script" && exit 255
 [ ! "$(cat /etc/os-release | awk -F '=' '/^ID_LIKE=/{print $2}')" = "debian" ] && echo >&2 "FATAL: script tested on debian family distros. Read the script to understand how it works" && exit 255
 
 : ${FULLNAME:?'FATAL: missing FULLNAME variable'}
 : ${EMAIL:?'FATAL: missing EMAIL variable'}
 
-#export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive
 
-apt-get update  -qq
-apt-get install -qq -y curl vim git gnupg rng-tools
-
+sudo apt-get update
+sudo apt-get install -y curl vim git gnupg rng-tools
 
 # ========================================================= DOCKER
 
-curl https://get.docker.com | bash
-service docker start
-usermod -aG docker $SUDO_USER
-
-# ========================================================= (switch back to normal user)
-
-exec su -l $SUDO_USER
+if ! command -v "$@" > /dev/null 2>&1
+then
+  curl https://get.docker.com | sudo bash
+  service docker start
+  usermod -aG docker $USER
+fi
 
 # ========================================================= SSH
 
 # https://www.ssi.gouv.fr/guide/recommandations-pour-un-usage-securise-dopenssh/
-ssh-keygen -t ed25519 -b 256 -N "" -f ~/.ssh/id_ed25519
+[ ! -f ~/.ssh/id_ed25519 ] && ssh-keygen -t ed25519 -C "$EMAIL" -b 256 -N "" -f ~/.ssh/id_ed25519
 
 echo "
 Now do the following before continuing :
@@ -41,11 +38,15 @@ Now do the following before continuing :
     $(cat ~/.ssh/id_ed25519.pub)
 
 "
-read
 
-while ! ssh -o LogLevel=ERROR -o StrictHostKeyChecking=accept-new -o RequestTTY=no git@github.com
+while [ $(ssh -o LogLevel=ERROR -o StrictHostKeyChecking=accept-new -o RequestTTY=no git@github.com 2>&1 | grep -c 'successfully authenticated') -eq 0 ]
 do
-    read -p "Nope. Retry then press a key."
+    echo
+    echo "github.com does not (yet) recognize the key"
+    echo "Please follow the above instruction"
+    echo "Waiting 30s before retry"
+    echo
+    sleep 30
 done
 
 # ========================================================= GPG
@@ -84,13 +85,16 @@ git config --global user.email "$EMAIL"
 
 # ========================================================= ASDF
 
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
+if [ ! -d ~/.asdf ]
+then
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
 
-cat >> ~/.bashrc <<EOF
+    cat >> ~/.bashrc <<EOF
 
 source \$HOME/.asdf/asdf.sh
 source \$HOME/.asdf/completions/asdf.bash
 EOF
+fi
 
 source ~/.bashrc
 
